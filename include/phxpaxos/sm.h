@@ -27,16 +27,20 @@ See the AUTHORS file for names of contributors.
 #include <stdint.h>
 #include <inttypes.h>
 
+// 状态机 抽象
 namespace phxpaxos
 {
 
+// 状态机 上下文
 class SMCtx
 {
 public:
     SMCtx();
     SMCtx(const int iSMID, void * pCtx);
 
+    // 状态机编号
     int m_iSMID;
+    // 穿输者 上下文
     void * m_pCtx;
 };
 
@@ -55,6 +59,7 @@ typedef std::vector<CheckpointFileInfo> CheckpointFileInfoList;
 
 const uint64_t NoCheckpoint = (uint64_t)-1; 
 
+// 状态机实现类
 class StateMachine
 {
 public:

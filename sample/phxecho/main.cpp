@@ -89,35 +89,46 @@ int main(int argc, char ** argv)
         return -1;
     }
 
+    // 当前节点
     NodeInfo oMyNode;
+    // 获取到 命令行中的节点的内容
     if (parse_ipport(argv[1], oMyNode) != 0)
     {
         printf("parse myip:myport fail\n");
         return -1;
     }
 
+    // 所有节点list
     NodeInfoList vecNodeInfoList;
+    // 所有节点获取
     if (parse_ipport_list(argv[2], vecNodeInfoList) != 0)
     {
         printf("parse ip/port list fail\n");
         return -1;
     }
 
+    //  创建回文服务器
+    // c++ 创建对象的方式 栈上分配
     PhxEchoServer oEchoServer(oMyNode, vecNodeInfoList);
+    // 使用 运行paxos 算法获取主节点
     int ret = oEchoServer.RunPaxos();
+    
     if (ret != 0)
     {
         return -1;
     }
-
+    // 输出当前节点信息
     printf("echo server start, ip %s port %d\n", oMyNode.GetIP().c_str(), oMyNode.GetPort());
-
+    
+    // 循环获取到输出节点信息
     string sEchoReqValue;
     while (true)
     {
         printf("\nplease input: <echo req value>\n");
+        // 获取每次发动的行记录
         getline(cin, sEchoReqValue);
         string sEchoRespValue;
+        // 开始答应数据
         ret = oEchoServer.Echo(sEchoReqValue, sEchoRespValue);
         if (ret != 0)
         {

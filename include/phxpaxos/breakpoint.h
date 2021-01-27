@@ -23,9 +23,13 @@ See the AUTHORS file for names of contributors.
 
 #include <string>
 
+// 断点处理=====> 插桩代码 可用于一些代码监控, 我们在使用 这部分数据的时候,
+// 可以将数据回调出来 方便后序的hook
+
 namespace phxpaxos
 {
 
+// 穿输人 断点
 class ProposerBP
 {
 public:
@@ -48,6 +52,7 @@ public:
     virtual void AcceptTimeout() { }
 };
 
+// 接收人 断点
 class AcceptorBP
 {
 public:
@@ -62,6 +67,7 @@ public:
     virtual void OnAcceptReject() { }
 };
 
+// 学习者 断点
 class LearnerBP
 {
 public:
@@ -88,6 +94,7 @@ public:
     virtual void SenderSendOnePaxosLog() { }
 };
 
+// 建议者 断点
 class InstanceBP
 {
 public:
@@ -111,6 +118,7 @@ public:
     virtual void ChecksumLogicFail() { }
 };
 
+// 提交者 断点？？？
 class CommiterBP
 {
 public:
@@ -130,6 +138,7 @@ public:
     virtual void BatchProposeDoPropose(const int iBatchCount) { }
 };
 
+// io事件循环断点
 class IOLoopBP
 {
 public:
@@ -143,6 +152,7 @@ public:
     virtual void DealWithRetryMsg() { }
 };
 
+// 网络断点
 class NetworkBP
 {
 public:
@@ -165,6 +175,7 @@ public:
     virtual void UDPQueueFull() { }
 };
 
+// 日志断点
 class LogStorageBP
 {
 public:

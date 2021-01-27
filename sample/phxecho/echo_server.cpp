@@ -33,6 +33,7 @@ using namespace std;
 namespace phxecho
 {
 
+// 创建回文 服务器. 服务器节点 m_poPaxosNode 是个 nullptr 数据
 PhxEchoServer :: PhxEchoServer(const phxpaxos::NodeInfo & oMyNode, const phxpaxos::NodeInfoList & vecNodeList)
     : m_oMyNode(oMyNode), m_vecNodeList(vecNodeList), m_poPaxosNode(nullptr)
 {
@@ -40,14 +41,16 @@ PhxEchoServer :: PhxEchoServer(const phxpaxos::NodeInfo & oMyNode, const phxpaxo
 
 PhxEchoServer :: ~PhxEchoServer()
 {
+    // 销毁 m_poPaxosNode
     delete m_poPaxosNode;
 }
 
 int PhxEchoServer :: MakeLogStoragePath(std::string & sLogStoragePath)
 {
     char sTmp[128] = {0};
+    // 以logpath为前缀,这部分有一个问题, 就是  我们在使用 域名的时候 会显示什么. 
     snprintf(sTmp, sizeof(sTmp), "./logpath_%s_%d", m_oMyNode.GetIP().c_str(), m_oMyNode.GetPort());
-
+    
     sLogStoragePath = string(sTmp);
 
     if (access(sLogStoragePath.c_str(), F_OK) == -1)
@@ -65,7 +68,7 @@ int PhxEchoServer :: MakeLogStoragePath(std::string & sLogStoragePath)
 int PhxEchoServer :: RunPaxos()
 {
     Options oOptions;
-
+    // 获取log 日志文件地址-----> 创建日志存储路径的数据
     int ret = MakeLogStoragePath(oOptions.sLogStoragePath);
     if (ret != 0)
     {
@@ -75,14 +78,18 @@ int PhxEchoServer :: RunPaxos()
     //this groupcount means run paxos group count.
     //every paxos group is independent, there are no any communicate between any 2 paxos group.
     oOptions.iGroupCount = 1;
-
+    // 将主节点放入
     oOptions.oMyNode = m_oMyNode;
+    // 将所有的参与节点放入
     oOptions.vecNodeInfoList = m_vecNodeList;
 
+    // 状态机组信息
     GroupSMInfo oSMInfo;
     oSMInfo.iGroupIdx = 0;
+    // 一个paxos 组可以有多个 状态机？？？？ 这个没有很明白
     //one paxos group can have multi state machine.
     oSMInfo.vecSMList.push_back(&m_oEchoSM);
+    // 将已经收集到的 状态机放入状态机组内
     oOptions.vecGroupSMInfoList.push_back(oSMInfo);
 
     //use logger_google to print log
